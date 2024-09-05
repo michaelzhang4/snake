@@ -1,7 +1,10 @@
 extern crate piston_window;
 extern crate rand;
 
+use glyph_cache::rusttype::GlyphCache;
 use piston_window::*;
+use piston_window::{Glyphs, text};
+
 
 use std::collections::VecDeque;
 use std::time::{Duration,Instant};
@@ -36,11 +39,14 @@ struct Snake {
 }
 
 fn main() {
+    let assets = "/usr/share/fonts/truetype/ubuntu/";
+    let mut score = 0;
     let mut window: PistonWindow = 
-        WindowSettings::new("Snake", [GRID_SIZE as f64 * BLOCK_SIZE,GRID_SIZE as f64 * BLOCK_SIZE])
-        .exit_on_esc(true)
-        .build()
-        .unwrap();
+    WindowSettings::new("Snake", [GRID_SIZE as f64 * BLOCK_SIZE,GRID_SIZE as f64 * BLOCK_SIZE])
+    .exit_on_esc(true)
+    .build()
+    .unwrap();
+    let mut glyphs = window.load_font(assets.to_string() + "Ubuntu-L.ttf").unwrap();
     let mut grid: [[BlockType;GRID_SIZE];GRID_SIZE] = [[BlockType::Empty;GRID_SIZE];GRID_SIZE];
     let mut snake = Snake{dir: Direction::Right, body: VecDeque::new()};
 
@@ -90,17 +96,20 @@ fn main() {
         }
         
         if last_update.elapsed() >= Duration::from_millis(200) {       
-            game_status = update_grid(&mut snake, &mut grid, &mut fruit);
+            game_status = update_grid(&mut snake, &mut grid, &mut fruit, &mut score);
             last_update = Instant::now();
         }
-        window.draw_2d(&e, |c, g, _| {
-            draw(c, g, &mut grid);
+        window.draw_2d(&e, |c, g, device | {
+            draw(c, g, &mut grid, &score, &mut glyphs);
+            glyphs.factory.encoder.flush(device);
         });
     }
 }
 
-fn draw(c: Context, g: &mut G2d, grid: &mut[[BlockType;GRID_SIZE];GRID_SIZE]) {
+fn draw(c: Context, g: &mut G2d, grid: &mut[[BlockType;GRID_SIZE];GRID_SIZE], score: &i32, glyphs: &mut Glyphs ) {
+    let num_str = score.to_string();
     clear(color::WHITE, g);
+    let _ = text(color::BLACK, 48, &num_str, glyphs, c.transform.trans(GRID_SIZE as f64*64.0 / 2.0,50.0), g);
     for i in 0..GRID_SIZE {
         for j in 0..GRID_SIZE {
             match grid[i][j] {
@@ -118,7 +127,7 @@ fn draw(c: Context, g: &mut G2d, grid: &mut[[BlockType;GRID_SIZE];GRID_SIZE]) {
     }
 }
 
-fn update_grid(snake: &mut Snake, grid: &mut[[BlockType;GRID_SIZE];GRID_SIZE], fruit: &mut bool) -> GameStatus {
+fn update_grid(snake: &mut Snake, grid: &mut[[BlockType;GRID_SIZE];GRID_SIZE], fruit: &mut bool, score: &mut i32) -> GameStatus {
     let mut ate = false;
     if let Some(&head) = snake.body.front() {
         match snake.dir {
@@ -185,6 +194,7 @@ fn update_grid(snake: &mut Snake, grid: &mut[[BlockType;GRID_SIZE];GRID_SIZE], f
                 grid[tail.0][tail.1] = BlockType::Empty;
             }
         } else {
+            *score += 1;
             *fruit = false;
         }
     }
