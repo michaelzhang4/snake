@@ -8,7 +8,6 @@ mod snake;
 
 use constants::*;
 use game::*;
-use snake::*;
 use piston_window::*;
 
 
@@ -28,6 +27,7 @@ fn main() {
     while let Some(e) = window.next() {
         if new_game.game_status == GameStatus::GameOver {
             println!("Game Over");
+            println!("Score: {}",new_game.score);
             break;
         }
         
