@@ -16,25 +16,19 @@ pub enum BlockType {
 }
 
 pub struct Game {
-    pub snake: Snake,
-    pub food_exist: bool,
+    snake: Snake,
+    food_exist: bool,
     pub game_status: GameStatus,
-    pub speed: f64,
-    height: f64,
-    width: f64,
     pub grid: [[BlockType;GRID_SIZE];GRID_SIZE],
     pub score: i32,
 }
 
 impl Game {
-    pub fn new(width: f64, height: f64) -> Game {
+    pub fn new() -> Game {
         let mut game = Game {
             snake: Snake::new(),
             food_exist: false,
             game_status: GameStatus::Running,
-            speed: 0.2,
-            height,
-            width,
             grid: [[BlockType::Empty;GRID_SIZE];GRID_SIZE],
             score: 0,
         };
@@ -72,5 +66,83 @@ impl Game {
                 ();
             }
         }
+    }
+
+    pub fn update_grid(&mut self) {
+        let mut ate = false;
+        if let Some(head) = self.snake.head() {
+            match self.snake.dir {
+                Direction::Up => {
+                    if head.0 > 0 && self.grid[head.0-1][head.1]!=BlockType::Snake {
+                        if self.grid[head.0-1][head.1] == BlockType::Food {
+                            ate = true;
+                        }
+                        self.grid[head.0-1][head.1] = BlockType::Snake;
+                        self.snake.push_front(head.0-1,head.1);
+    
+                    } else {
+                        self.game_status = GameStatus::GameOver;
+                        return;
+                    }
+                }
+                Direction::Down => {
+                    if head.0 < GRID_SIZE-1 && self.grid[head.0+1][head.1]!=BlockType::Snake {
+                        if self.grid[head.0+1][head.1] == BlockType::Food {
+                            ate = true;
+                        }
+                        self.snake.push_front(head.0+1,head.1);
+                        self.grid[head.0+1][head.1] = BlockType::Snake;
+                    } else {
+                        self.game_status = GameStatus::GameOver;
+                        return;
+                    }
+                }
+                Direction::Left => {
+                    if head.1 > 0 && self.grid[head.0][head.1-1]!=BlockType::Snake {    
+                        if self.grid[head.0][head.1-1] == BlockType::Food {
+                            ate = true;
+                        }
+                        self.snake.push_front(head.0,head.1-1);
+                        self.grid[head.0][head.1-1] = BlockType::Snake;
+                    } else {
+                        self.game_status = GameStatus::GameOver;
+                        return;
+                    }
+                }
+                Direction::Right => {
+                    if head.1 < GRID_SIZE-1 && self.grid[head.0][head.1+1]!=BlockType::Snake {
+                        if self.grid[head.0][head.1+1] == BlockType::Food {
+                            ate = true;
+                        }
+                        self.snake.push_front(head.0,head.1+1);
+                        self.grid[head.0][head.1+1] = BlockType::Snake;
+                    } else {
+                        self.game_status = GameStatus::GameOver;
+                        return;
+                    }
+                }
+            }
+            if !self.food_exist {
+                let mut finished = false;
+                while !finished {
+                    let x: usize = (rand::random::<f64>()*100.0) as usize % GRID_SIZE;
+                    let y: usize = (rand::random::<f64>()*100.0) as usize % GRID_SIZE;
+                    if self.grid[x][y] == BlockType::Empty {
+                        finished = true;
+                        self.grid[x][y] = BlockType::Food;
+                    }
+                }
+                self.food_exist = true;
+            }
+            if !ate {
+                if let Some(tail) = self.snake.pop_back() {
+                    self.grid[tail.0][tail.1] = BlockType::Empty;
+                }
+            } else {
+                self.score += 1;
+                self.food_exist = false;
+            }
+        }
+        self.game_status = GameStatus::Running;
     }
 }
