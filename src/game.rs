@@ -42,22 +42,22 @@ impl Game {
 
     pub fn key_pressed(&mut self, key: Key) {
         match key {
-            Key::W => {
+            Key::W | Key::Up => {
                 if self.snake.dir!=Direction::Down {
                     self.snake.dir = Direction::Up;
                 }                    
             }
-            Key::S => {
+            Key::S | Key::Down => {
                 if self.snake.dir!=Direction::Up {
                     self.snake.dir = Direction::Down;
                 }
             }
-            Key::A => {
+            Key::A | Key::Left => {
                 if self.snake.dir!=Direction::Right {
                     self.snake.dir = Direction::Left;
                 }
             }
-            Key::D => {
+            Key::D | Key::Right => {
                 if self.snake.dir!=Direction::Left {
                     self.snake.dir = Direction::Right;
                 }
