@@ -48,6 +48,8 @@ fn main() {
         let mut interpolation = elapsed.as_secs_f64() / update_duration.as_secs_f64();
         if interpolation > 1.0 {
             interpolation = 1.0;
+        } else if interpolation < 0.0 {
+            interpolation = 0.0;
         }
 
         window.draw_2d(&e, |c, g, device | {
