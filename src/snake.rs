@@ -46,17 +46,9 @@ impl Snake {
     }
 
     pub fn pop_back(&mut self) -> Option<SnakeSegment> {
-        if let Some(mut tail_segment) = self.body.pop_back() {
-            tail_segment.removal_time = Some(Instant::now());
-            let (offset_x, offset_y) = (tail_segment.current_position.0-tail_segment.previous_position.0, tail_segment.current_position.1-tail_segment.previous_position.1);
-
-            tail_segment.previous_position = tail_segment.current_position;
-            tail_segment.current_position = (
-                tail_segment.current_position.0 + offset_x,
-                tail_segment.current_position.1 + offset_y,
-            );
-                self.removed_segments.push(tail_segment.clone());
-                Some(tail_segment)
+        if let Some(tail_segment) = self.body.pop_back() {
+            self.removed_segments.push(tail_segment.clone());
+            Some(tail_segment)
         } else {
             None
         }
