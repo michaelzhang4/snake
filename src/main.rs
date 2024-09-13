@@ -14,13 +14,13 @@ use piston_window::*;
 use std::time::{Duration,Instant};
 
 fn main() {
-    let assets = "/usr/share/fonts/truetype/ubuntu/";
+    let assets = "assets/Ubuntu-M.ttf";
     let mut window: PistonWindow = 
     WindowSettings::new("Snake", [GRID_SIZE as f64 * BLOCK_SIZE,GRID_SIZE as f64 * BLOCK_SIZE])
     .exit_on_esc(true)
     .build()
     .unwrap();
-    let mut glyphs = window.load_font(assets.to_string() + "Ubuntu-L.ttf").unwrap();
+    let mut glyphs = window.load_font(assets.to_string()).unwrap();
     let mut last_update = Instant::now();
     let mut new_game = Game::new();
 
