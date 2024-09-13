@@ -22,6 +22,7 @@ fn main() {
     .unwrap();
     let mut glyphs = window.load_font(assets.to_string()).unwrap();
     let mut last_update = Instant::now();
+    let update_duration = Duration::from_millis(200);
     let mut new_game = Game::new();
 
     while let Some(e) = window.next() {
@@ -34,13 +35,23 @@ fn main() {
         if let Some(Button::Keyboard(key)) = e.press_args() {
             new_game.key_pressed(key);
         }
+
+        let now = Instant::now();
+        let elapsed = now.duration_since(last_update);
         
-        if last_update.elapsed() >= Duration::from_millis(200) {       
+        if elapsed >= update_duration {       
             new_game.update_grid();
-            last_update = Instant::now();
+            new_game.cleanup(update_duration);
+            last_update = now;
         }
+
+        let mut interpolation = elapsed.as_secs_f64() / update_duration.as_secs_f64();
+        if interpolation > 1.0 {
+            interpolation = 1.0;
+        }
+
         window.draw_2d(&e, |c, g, device | {
-            draw::draw(c, g, &mut new_game, &mut glyphs);
+            draw::draw(c, g, &mut new_game, &mut glyphs, interpolation);
             glyphs.factory.encoder.flush(device);
         });
     }
