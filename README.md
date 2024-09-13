@@ -1,6 +1,6 @@
 # Rust Snake
 
-A small game I created as a practical exercise for learning Rust as I am interested in the language.
+A game I created as a practical exercise for learning Rust as I am interested in learning the language.
 
 ## Installation
 
@@ -17,3 +17,6 @@ cd snake
 # Command to start the game
 cargo run
 ```
+
+## Screenshot
+![image](https://github.com/user-attachments/assets/ed54c84a-75f3-4817-8b8d-b551678e9081)
