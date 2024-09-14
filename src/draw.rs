@@ -22,10 +22,12 @@ pub fn draw(c: Context, g: &mut G2d, game: &mut Game, glyphs: &mut Glyphs, inter
             }
         }
     }
+
     for segment in &game.snake.body {
         
         let interpolated_x = segment.previous_position.0 + (segment.current_position.0 - segment.previous_position.0) * interpolation;
         let interpolated_y = segment.previous_position.1 + (segment.current_position.1 - segment.previous_position.1) * interpolation;
+
         if segment.current_position.0-segment.previous_position.0 == 0.0 {
             rectangle(color::GREEN,[interpolated_x * BLOCK_SIZE + DIFF, interpolated_y * BLOCK_SIZE, SNAKE_SIZE, BLOCK_SIZE], c.transform, g);
         }

@@ -23,6 +23,7 @@ fn main() {
     let mut glyphs = window.load_font(assets.to_string()).unwrap();
     let mut last_update = Instant::now();
     let update_duration = Duration::from_millis(200);
+    let mut lag = Duration::from_secs(0);
     let mut new_game = Game::new();
 
     while let Some(e) = window.next() {
@@ -36,25 +37,23 @@ fn main() {
             new_game.key_pressed(key);
         }
 
-        let now = Instant::now();
-        let elapsed = now.duration_since(last_update);
+        let current = Instant::now();
+        let elapsed = current.duration_since(last_update);
+        last_update = current;
+        lag += elapsed;
         
-        if elapsed >= update_duration {       
+        if lag >= update_duration {       
             new_game.update_grid();
             new_game.cleanup(update_duration);
-            last_update = now;
+            lag -= update_duration;
         }
 
-        let mut interpolation = elapsed.as_secs_f64() / update_duration.as_secs_f64();
-        if interpolation > 1.0 {
-            interpolation = 1.0;
-        } else if interpolation < 0.0 {
-            interpolation = 0.0;
-        }
+        let interpolation = lag.as_secs_f64() / update_duration.as_secs_f64();
 
         window.draw_2d(&e, |c, g, device | {
             draw::draw(c, g, &mut new_game, &mut glyphs, interpolation);
             glyphs.factory.encoder.flush(device);
         });
+    
     }
 }
