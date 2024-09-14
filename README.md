@@ -19,4 +19,4 @@ cargo run
 ```
 
 ## Screenshot
-![vxqL9EG18D](https://github.com/user-attachments/assets/ed898801-4305-4b31-9c4c-7f8ddabb3381)
+![vxqL9EG18D](https://github.com/user-attachments/assets/f3d44d64-6439-47cd-8477-72da48ee8019)
