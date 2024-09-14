@@ -29,10 +29,10 @@ pub fn draw(c: Context, g: &mut G2d, game: &mut Game, glyphs: &mut Glyphs, inter
         let interpolated_y = segment.previous_position.1 + (segment.current_position.1 - segment.previous_position.1) * interpolation;
 
         if segment.current_position.0-segment.previous_position.0 == 0.0 {
-            rectangle(color::GREEN,[interpolated_x * BLOCK_SIZE + DIFF, interpolated_y * BLOCK_SIZE, SNAKE_SIZE, BLOCK_SIZE], c.transform, g);
+            rectangle(color::GREEN,[interpolated_x * BLOCK_SIZE + DIFF, interpolated_y * BLOCK_SIZE, SNAKE_SIZE, BLOCK_SIZE - DIFF], c.transform, g);
         }
         if segment.current_position.1-segment.previous_position.1 == 0.0 {
-            rectangle(color::GREEN,[interpolated_x * BLOCK_SIZE, interpolated_y * BLOCK_SIZE + DIFF, BLOCK_SIZE, SNAKE_SIZE], c.transform, g);
+            rectangle(color::GREEN,[interpolated_x * BLOCK_SIZE, interpolated_y * BLOCK_SIZE + DIFF, BLOCK_SIZE - DIFF, SNAKE_SIZE], c.transform, g);
         }
     }
 
