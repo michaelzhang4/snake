@@ -14,17 +14,25 @@ use piston_window::*;
 use std::time::{Duration,Instant};
 
 fn main() {
-    let assets = "assets/Ubuntu-M.ttf";
     let mut window: PistonWindow = 
     WindowSettings::new("Snake", [GRID_SIZE as f64 * BLOCK_SIZE,GRID_SIZE as f64 * BLOCK_SIZE])
     .exit_on_esc(true)
+    .samples(4)
     .build()
     .unwrap();
-    let mut glyphs = window.load_font(assets.to_string()).unwrap();
+    
     let mut last_update = Instant::now();
     let update_duration = Duration::from_millis(200);
     let mut lag = Duration::from_secs(0);
     let mut new_game = Game::new();
+    
+    let assets = "assets/Roboto-Black.ttf";
+    let texture_settings = TextureSettings::new().filter(Filter::Linear);
+    let mut glyphs = Glyphs::new(
+        assets,
+        window.create_texture_context(),
+        texture_settings,
+    ).expect("Could not load font");
 
     while let Some(e) = window.next() {
         if new_game.game_status == GameStatus::GameOver {
@@ -54,6 +62,5 @@ fn main() {
             draw::draw(c, g, &mut new_game, &mut glyphs, interpolation);
             glyphs.factory.encoder.flush(device);
         });
-    
     }
 }

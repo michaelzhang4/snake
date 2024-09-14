@@ -44,5 +44,5 @@ pub fn draw(c: Context, g: &mut G2d, game: &mut Game, glyphs: &mut Glyphs, inter
     }
 
     let num_str = game.score.to_string();
-    let _ = text(color::BLACK, 48, &num_str, glyphs, c.transform.trans(GRID_SIZE as f64*64.0 / 2.0,50.0), g);
+    let _ = text(color::BLACK, 72, &num_str, glyphs, c.transform.trans((GRID_SIZE as f64-1.0)*64.0 / 2.0,70.0), g);
 }
